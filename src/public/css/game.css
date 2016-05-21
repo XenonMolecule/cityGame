@@ -2,6 +2,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    background: #007399;
 }
 
 #street-view {
@@ -21,4 +22,88 @@ html, body {
     height:20px;
     margin-top:10px;
     border-radius:5px 5px;
+}
+
+.startButton{
+    width:10vw;
+    height:5vw;
+    border-radius:10px;
+    font-size:3.5vw;
+    background-color:rgba(0,0,0,0.0);
+    border-style:solid;
+    border-width:5px;
+    border-color:#000;
+    text-align:center;
+    cursor:pointer;
+    z-index: 999;
+    font-family:Oswald;
+    color:#000;
+}
+
+.beginGame{
+  border-color:#FFF !important;
+  color:#FFF !important;
+  width:20vw !important;
+  height:10vw !important;
+  font-size:5vw !important;
+}
+
+.startBtn {
+  position:absolute;
+  margin-top:85vh;
+  margin-left:45vw;
+}
+
+.disabledBtn{
+    border-color: #404040 !important;
+    color:#404040 !important;
+}
+
+.waitScreen{
+  text-align:center;
+  color:#FFF; 
+}
+
+.waitScreen p{
+  font-size:10vw;
+}
+
+.waitScreen h1{
+  font-size:20vw;
+}
+.joinGame{
+  text-align:center;
+  color:#FFF;
+  font-family:Oswald;
+}
+
+.joinGame p{
+  font-size:10vw;
+  margin-bottom:5px
+}
+
+.joinGame input{
+  height:15vh;
+  width:60vw;
+  font-size: 8vw;
+  margin-top:0px;
+  text-align:center;
+}
+
+.joinGame button{
+  margin-top:20px;
+}
+
+@media(min-width:1200px){
+  .waitScreen p{
+    font-size:5vw;
+  }
+  .waitScreen h1{
+    font-size:10vw;
+  }
+  .beginGame{
+    width:10vw !important;
+    height:5vw !important;
+    font-size:2.5vw !important;
+  }
 }

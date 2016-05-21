@@ -1,6 +1,12 @@
 extends ./layout.jade
 
 block content
-    input(id="ac", placeholder="Enter a City")
+    .selection
+        input(id="ac", placeholder="Enter a City")
+        btn(id="startBtn").disabledBtn.startBtn.startButton Start!
+    .waitScreen(hidden)
+        p Code:
+        h1 000000
+        button.startButton.beginGame.disabledBtn Start!
     div(id="map")
     div(id="street-view", hidden)

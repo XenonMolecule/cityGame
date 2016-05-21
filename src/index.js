@@ -5,6 +5,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var gameCodes = [];
 
 app.use('/static', express.static(__dirname + '/public'));
 
@@ -39,11 +40,41 @@ app.get("/join",function(req,res){
     res.locals.host = false;
     res.render("join.jade");
     initSocketIO();
-})
+});
 
 //SOCKET IO CONNECTION HANDLING
 function initSocketIO(){
     io.on('connection', function(socket){
         console.log(socket.id);
+        socket.on('join',function(id){
+            var data = {id:id,serverID:socket.id}
+            io.emit('join',data);
+        });
+        socket.on('successfulPair',function(id){
+            id.serverID = socket.id;
+            io.emit('successfulPair',id);
+        });
+        socket.on('giveData',function(data){
+           io.emit('giveData',data); 
+        });
+        socket.on('newGameCode',function(data){
+            console.log(data);
+            var successCount = 0;
+            for(var i = 0; i < gameCodes.length; i ++){
+                if(gameCodes[i] == data){
+                    socket.emit('failedCode',data);
+                    console.log("fail");
+                    break;
+                } else {
+                    successCount++;
+                }
+            }
+            if(successCount == gameCodes.length){
+                socket.emit('successfulCode',data);
+                console.log("success");
+                gameCodes.push(data);
+            }
+        });
     });
 }
+

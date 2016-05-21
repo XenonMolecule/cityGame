@@ -1,11 +1,12 @@
-var panorama,map,boundaries,locationInfo;
+var panorama,map,boundaries,locationInfo,thisID,gameStarted = false,partner,serverID,repeatedCheck,codeSuccess=0;
 
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
     //INIT MAP
     map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 37.869260, lng: -122.254811},
-          zoom: 8
+          zoom: 8,
+          streetViewControl:false
         }
     );
     
@@ -36,6 +37,20 @@ function initMap() {
         }
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
+        $("#startBtn").removeClass("disabledBtn");
+    });
+    $("#startBtn").click(function(){
+        if(boundaries!=undefined){
+            $(".selection").hide();
+            $("#map").hide();
+            generateCode();
+            waitForCondition(function(){
+                return thisID!=undefined;
+            },100,function(){
+                $(".waitScreen h1").text(thisID);
+                $(".waitScreen").fadeIn(1000);
+            });
+        }
     });
      /*
      panorama = new google.maps.StreetViewPanorama(
@@ -47,4 +62,57 @@ function initMap() {
           }
         );
      */
+}
+
+socket.on("join",function(id){
+    if(thisID!=undefined){
+        if(gameStarted === false){
+            if(thisID == id.id){
+                var data = {id:thisID,yourID:id.serverID}
+                socket.emit("successfulPair",data);
+            }
+        }
+    }
+});
+
+socket.on('giveID',function(data){
+   if(thisID!=undefined&&gameStarted==false){
+       if(data.id==thisID){
+           serverID = data.yourID;
+       }
+   } 
+});
+
+function generateCode(){
+    var code = Math.round(Math.random()*100000);
+    console.log(code);
+    socket.emit('newGameCode',code);
+    repeatedCheck = setInterval(checkCode,100,code);
+}
+
+function checkCode(code){
+    switch (codeSuccess){
+        case -1:
+            generateCode();
+            clearInterval(repeatedCheck);
+            break;
+        case 1:
+            thisID = code;
+            clearInterval(repeatedCheck);
+    }
+}
+
+socket.on('failedCode',function(){
+   codeSuccess = -1; 
+});
+
+socket.on("successfulCode",function(){
+    codeSuccess = 1;
+})
+
+function waitForCondition(condition,checkInterval,callback){
+    if(condition()){
+        callback();
+    }
+    setTimeout(waitForCondition,checkInterval,condition,checkInterval,callback);
 }
