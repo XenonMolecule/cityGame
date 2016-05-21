@@ -80,6 +80,8 @@ socket.on('giveID',function(data){
        if(data.id==thisID){
            serverID = data.yourID;
            partner = data.partnerID;
+           $(".connectMsg").text("A player has connected!");
+           $(".startButton").removeClass("disabledBtn");
        }
    } 
 });

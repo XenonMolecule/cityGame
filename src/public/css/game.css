@@ -3,6 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     background: #007399;
+    font-family:Oswald;
 }
 
 #street-view {
@@ -66,10 +67,14 @@ html, body {
 
 .waitScreen p{
   font-size:10vw;
+  margin-bottom:5px;
+  margin-top:10vh;
 }
 
 .waitScreen h1{
   font-size:20vw;
+  margin-top:0px;
+  margin-bottom:5px;
 }
 .joinGame{
   text-align:center;
@@ -94,6 +99,23 @@ html, body {
   margin-top:20px;
 }
 
+.connectMsg{
+  font-size:3vw !important;
+  margin-top:10px !important;
+}
+
+.wait{
+  text-align:center;
+}
+
+.wait p{
+  font-size:10vw;
+  font-family:Oswald;
+  color:#FFF;
+  margin-top:30vh;
+  
+}
+
 @media(min-width:1200px){
   .waitScreen p{
     font-size:5vw;
@@ -105,5 +127,8 @@ html, body {
     width:10vw !important;
     height:5vw !important;
     font-size:2.5vw !important;
+  }
+  .connectMsg{
+    font-size:1.5vw !important;
   }
 }

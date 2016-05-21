@@ -14,5 +14,8 @@ socket.on('successfulPair',function(id){
         partner = id.serverID;
         var data = {id:gameCode,yourID:partner}
         socket.emit('giveID',data);
+        $(".joinGame").fadeOut(500,function(){
+            $(".wait").fadeIn(500);
+        });
     }
 });
