@@ -21,18 +21,29 @@ http.listen(port,function(){
 //      Should be what the user sees when they first arrive on the website
 app.get("/",function(req,res){
     res.locals.onGame = false;
+    res.locals.host = false;
     res.render("home.jade");
 });
 
-//GAME ROUTE--
+//HOST ROUTE--
 //      Should render the game for the user to play
-app.get("/game",function(req,res){
+app.get("/host",function(req,res){
     res.locals.onGame = true;
-    res.render("game.jade");
-    
-    //SOCKET IO CONNECTION HANDLING
+    res.locals.host = true;
+    res.render("host.jade");
+    initSocketIO();
+});
+
+app.get("/join",function(req,res){
+    res.locals.onGame = true;
+    res.locals.host = false;
+    res.render("join.jade");
+    initSocketIO();
+})
+
+//SOCKET IO CONNECTION HANDLING
+function initSocketIO(){
     io.on('connection', function(socket){
         console.log(socket.id);
     });
-});
-
+}

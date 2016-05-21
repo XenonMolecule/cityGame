@@ -20,4 +20,5 @@ html, body {
     z-index:1000;
     height:20px;
     margin-top:10px;
+    border-radius:5px 5px;
 }
