@@ -65,7 +65,7 @@ function initMap() {
 }
 
 socket.on("join",function(id){
-    if(thisID!=undefined){
+    if(thisID!=undefined&&partner==undefined){
         if(gameStarted === false){
             if(thisID == id.id){
                 var data = {id:thisID,yourID:id.serverID}
@@ -79,6 +79,7 @@ socket.on('giveID',function(data){
    if(thisID!=undefined&&gameStarted==false){
        if(data.id==thisID){
            serverID = data.yourID;
+           partner = data.partnerID;
        }
    } 
 });
@@ -95,10 +96,12 @@ function checkCode(code){
         case -1:
             generateCode();
             clearInterval(repeatedCheck);
+            codeSuccess = 0;
             break;
         case 1:
             thisID = code;
             clearInterval(repeatedCheck);
+            codeSuccess = 0;
     }
 }
 

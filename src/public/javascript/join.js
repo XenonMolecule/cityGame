@@ -1,13 +1,10 @@
 var gameCode,gameStarted = false,partner,serverID;
-$( document ).load(function(){
-    $(".beginGame").on("click",function(){
-        console.log("submit");
-        if($(".code").val()!=""){
-            gameCode = $(".code").val();
-            socket.emit('join',$(".code").val());
-        }
-    });
-    console.log("loaded");
+
+$(".beginGame").on("click",function(){
+    if($(".code").val()!=""){
+        gameCode = $(".code").val();
+        socket.emit('join',$(".code").val());
+    }
 });
 
 
@@ -19,5 +16,3 @@ socket.on('successfulPair',function(id){
         socket.emit('giveID',data);
     }
 });
-
-console.log("I am attached");

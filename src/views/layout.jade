@@ -12,7 +12,7 @@ html(lang="en")
             script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs2phiRJMMH2r4GIZCZy6jVy89Og9aft8&callback=initMap&libraries=places" async defer)
             if host == true
                 script(src="/static/javascript/host.js")
-            else
+            else if host == false
                 script(src="/static/javascript/join.js")
             script(src="/static/javascript/app.js")
             

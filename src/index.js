@@ -54,8 +54,9 @@ function initSocketIO(){
             id.serverID = socket.id;
             io.emit('successfulPair',id);
         });
-        socket.on('giveData',function(data){
-           io.emit('giveData',data); 
+        socket.on('giveID',function(data){
+            data.partnerID = socket.id;
+            io.emit('giveID',data); 
         });
         socket.on('newGameCode',function(data){
             console.log(data);
