@@ -76,6 +76,9 @@ function initSocketIO(){
                 gameCodes.push(data);
             }
         });
+        socket.on('prepGame',function(destination){
+            io.emit('prepGame',destination);
+        })
     });
 }
 

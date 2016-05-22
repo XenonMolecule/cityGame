@@ -19,3 +19,14 @@ socket.on('successfulPair',function(id){
         });
     }
 });
+
+socket.on('prepGame',function(who){
+    if(who.for==serverID){
+        console.log("HIYA");
+        countDown(6,0,1000,function(num){
+            $(".wait p").text(num+"..."); 
+        },function(){
+            
+        });
+    }
+})

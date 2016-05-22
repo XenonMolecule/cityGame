@@ -113,7 +113,17 @@ html, body {
   font-family:Oswald;
   color:#FFF;
   margin-top:30vh;
-  
+}
+
+.countDown {
+  text-align:center;
+}
+
+.countDown p{
+  font-size:10vw;
+  font-family:Oswald;
+  color:#FFF;
+  margin-top:30vh;
 }
 
 @media(min-width:1200px){

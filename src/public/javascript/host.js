@@ -116,8 +116,28 @@ socket.on("successfulCode",function(){
 })
 
 function waitForCondition(condition,checkInterval,callback){
+    if(callback == undefined){
+        callback = function(){};
+    }
     if(condition()){
         callback();
+    } else {
+        setTimeout(waitForCondition,checkInterval,condition,checkInterval,callback);
     }
-    setTimeout(waitForCondition,checkInterval,condition,checkInterval,callback);
 }
+
+$(".beginGame").click(function(){
+    if(partner!=undefined){
+        console.log("fadeOut");
+        $(".waitScreen").fadeOut(500,function(){
+           $(".countDown").fadeIn(500);
+           socket.emit("prepGame",{for:partner});
+           countDown(6,0,1000,function(num){
+               $(".countDown p").text(num+"...");
+           },function(){
+               
+           });
+        });
+    }
+});
+
