@@ -64,7 +64,6 @@ function initSocketIO(){
             for(var i = 0; i < gameCodes.length; i ++){
                 if(gameCodes[i] == data){
                     socket.emit('failedCode',data);
-                    console.log("fail");
                     break;
                 } else {
                     successCount++;
@@ -72,13 +71,15 @@ function initSocketIO(){
             }
             if(successCount == gameCodes.length){
                 socket.emit('successfulCode',data);
-                console.log("success");
                 gameCodes.push(data);
             }
         });
         socket.on('prepGame',function(destination){
             io.emit('prepGame',destination);
-        })
+        });
+        socket.on('moved',function(data){
+            io.emit('moved',data); 
+        });
     });
 }
 

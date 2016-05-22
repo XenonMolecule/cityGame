@@ -126,6 +126,35 @@ html, body {
   margin-top:30vh;
 }
 
+.winmessage{
+  text-align:center;
+  margin-top:30vh;
+  font-size:5vw;
+  color:#FFF;
+  background-color:rgba(0, 115, 153,0.85);
+  z-index:1001;
+  height:20vh;
+  width:60vw;
+  margin-left:20vw;
+  border-radius:10px 10px;
+  position:absolute;
+}
+
+.winmessage h1{
+  margin-bottom:-10px;
+  margin-top:2px;
+}
+
+.winmessage br{
+  height:1vh;
+  margin-bottom:0px;
+  margin-top:0px;
+}
+
+.points{
+  margin-top:7px;
+}
+
 @media(min-width:1200px){
   .waitScreen p{
     font-size:5vw;
@@ -140,5 +169,9 @@ html, body {
   }
   .connectMsg{
     font-size:1.5vw !important;
+  }
+  
+  .winmessage{
+    font-size:2.5vw;
   }
 }

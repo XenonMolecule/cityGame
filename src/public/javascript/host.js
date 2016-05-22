@@ -1,4 +1,10 @@
-var panorama,map,boundaries,locationInfo,thisID,gameStarted = false,partner,serverID,repeatedCheck,codeSuccess=0;
+var panorama,map,boundaries,locationInfo,thisID,gameStarted = false,partner,serverID,repeatedCheck,codeSuccess=0,startPosition,partnerPosition,position;
+
+//THE DIFFICULTY GOES AS FOLLOWS (16 is EASY, 14 is MEDIUM, 12 is HARD)
+var difficulty = 16;
+
+//STREET VIEW DATA SERVICE
+var sv;
 
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
@@ -16,6 +22,9 @@ function initMap() {
         anchorPoint: new google.maps.Point(0, -29)
     });
     marker.setVisible(false);
+    
+    //INIT STREET VIEW DATA SERVICE
+    sv = new google.maps.StreetViewService();
     
     //INIT AUTOCOMPLETE
     var input = (document.getElementById('ac'));
@@ -38,11 +47,19 @@ function initMap() {
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
         $("#startBtn").removeClass("disabledBtn");
+        countDown(3,0,1000,function(num){},function(){
+            boundaries = (autocomplete.getBounds()).toJSON();
+            locationInfo = autocomplete;
+        });
     });
+    
+    //INIT START BUTTON
     $("#startBtn").click(function(){
         if(boundaries!=undefined){
             $(".selection").hide();
             $("#map").hide();
+            map.setZoom(difficulty);
+            boundaries = (map.getBounds().toJSON());
             generateCode();
             waitForCondition(function(){
                 return thisID!=undefined;
@@ -52,18 +69,9 @@ function initMap() {
             });
         }
     });
-     /*
-     panorama = new google.maps.StreetViewPanorama(
-          document.getElementById('street-view'),
-          {
-            position: {lat: 37.869260, lng: -122.254811},
-            pov: {heading: 165, pitch: 0},
-            zoom: 1
-          }
-        );
-     */
 }
 
+//ATTEMPT TO LINK WITH A "JOINER" WHEN THEY JOIN
 socket.on("join",function(id){
     if(thisID!=undefined&&partner==undefined){
         if(gameStarted === false){
@@ -75,6 +83,7 @@ socket.on("join",function(id){
     }
 });
 
+//SHARE THE "JOINER"'S ID WITH THEM
 socket.on('giveID',function(data){
    if(thisID!=undefined&&gameStarted==false){
        if(data.id==thisID){
@@ -86,6 +95,7 @@ socket.on('giveID',function(data){
    } 
 });
 
+//ATTEMPT TO GENERATE A UNIQUE GAME CODE
 function generateCode(){
     var code = Math.round(Math.random()*100000);
     console.log(code);
@@ -93,6 +103,7 @@ function generateCode(){
     repeatedCheck = setInterval(checkCode,100,code);
 }
 
+//DETERMINE IF THE CODE IS UNIQUE
 function checkCode(code){
     switch (codeSuccess){
         case -1:
@@ -107,6 +118,7 @@ function checkCode(code){
     }
 }
 
+//HANDLE SUCCESSFUL OR REPEATED CODES
 socket.on('failedCode',function(){
    codeSuccess = -1; 
 });
@@ -115,6 +127,8 @@ socket.on("successfulCode",function(){
     codeSuccess = 1;
 })
 
+//A GENERICK FUNCTION TO TAKE IN A CONDITION, AND WAIT TO CALL THE CALLBACK
+//UNTIL THAT CONDITION IS MET
 function waitForCondition(condition,checkInterval,callback){
     if(callback == undefined){
         callback = function(){};
@@ -126,18 +140,64 @@ function waitForCondition(condition,checkInterval,callback){
     }
 }
 
+//HANDLE STARTING THE GAME
 $(".beginGame").click(function(){
     if(partner!=undefined){
         console.log("fadeOut");
         $(".waitScreen").fadeOut(500,function(){
            $(".countDown").fadeIn(500);
-           socket.emit("prepGame",{for:partner});
+           socket.emit("prepGame",{for:partner,boundaries:boundaries});
            countDown(6,0,1000,function(num){
                $(".countDown p").text(num+"...");
            },function(){
-               
+               if(startPosition==undefined){
+                    startPosition = {lat: getRandom(boundaries.south,boundaries.north), lng: getRandom(boundaries.west,boundaries.east)};
+                    console.log(startPosition);
+                    panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
+                    sv.getPanorama({location: startPosition, radius: 1500}, processSVData);
+                    $(".countDown").hide();
+                    $("#street-view").show();
+                    panorama.addListener('position_changed',function(){
+                       position = panorama.getPosition().toJSON();
+                       checkVictory();
+                    });
+               }
            });
         });
     }
 });
 
+//A FUNCTION TO APPLY THE STREET FOUND TO THE PANORAMA
+function processSVData(data, status){
+    if (status === google.maps.StreetViewStatus.OK) {
+        panorama.setPano(data.location.pano);
+        panorama.setPov({
+          heading: 270,
+          pitch: 0
+        });
+        panorama.setVisible(true);
+    } else {
+        alert("could not find any photographed streets in the search area");
+    }
+}
+
+//A FUNCTION TO CHECK IF THE PLAYERS HAVE WON
+function checkVictory(){
+    if(partnerPosition!=undefined&&position!=undefined){
+        var partnerOBJ = new google.maps.LatLng(partnerPosition.lat,partnerPosition.lng);
+        var myOBJ = new google.maps.LatLng(position.lat,position.lng);
+        var distance = google.maps.geometry.spherical.computeDistanceBetween(myOBJ,partnerOBJ);
+        if(Math.abs(distance)<10){
+            alert("YOU WON");
+        }
+    }
+}
+
+socket.on('moved',function(data){
+    if(partner!=undefined){
+        if(serverID===data.for){
+            partnerPosition = data.position;
+            checkVictory();
+        }
+    }
+})

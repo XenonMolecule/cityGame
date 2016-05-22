@@ -9,7 +9,7 @@ html(lang="en")
         script(type='text/javascript').
             var socket = io();
         if onGame == true
-            script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs2phiRJMMH2r4GIZCZy6jVy89Og9aft8&callback=initMap&libraries=places" async defer)
+            script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs2phiRJMMH2r4GIZCZy6jVy89Og9aft8&callback=initMap&libraries=places,geometry" async defer)
             if host == true
                 script(src="/static/javascript/host.js")
             else if host == false
