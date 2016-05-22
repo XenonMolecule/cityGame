@@ -4,6 +4,9 @@ block content
     .selection
         input(id="ac", placeholder="Enter a City")
         btn(id="startBtn").disabledBtn.startBtn.startButton Start!
+    .winmessage(hidden)
+        h1 You Won!!!
+        p.points 2016 Points
     .waitScreen(hidden)
         p Code:
         h1 000000
@@ -13,6 +16,4 @@ block content
         p
     div(id="map")
     div(id="street-view",hidden)
-    .winmessage(hidden)
-        h1 You Won!!!
-        p.points 2016 Points
+    

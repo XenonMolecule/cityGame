@@ -1,4 +1,4 @@
-var gameCode,gameStarted = false,partner,serverID,startPosition,panorama,sv;
+var gameCode,gameStarted = false,partner,serverID,startPosition,panorama,sv,points;
 
 $(".beginGame").on("click",function(){
     if($(".code").val()!=""){
@@ -57,3 +57,12 @@ function processSVData(data, status){
         alert("could not find any photographed streets in the search area");
     }
 }
+
+socket.on("win",function(data){
+    console.log("WINNER");
+    if(data.for==serverID){
+        points = ((1800-data.time)*(data.difficulty-15));
+        $(".points").text(points);
+        $(".winmessage").fadeIn(1000);
+    }
+});

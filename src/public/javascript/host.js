@@ -1,4 +1,4 @@
-var panorama,map,boundaries,locationInfo,thisID,gameStarted = false,partner,serverID,repeatedCheck,codeSuccess=0,startPosition,partnerPosition,position;
+var panorama,map,boundaries,locationInfo,thisID,gameStarted = false,partner,serverID,repeatedCheck,codeSuccess=0,startPosition,partnerPosition,position,time=0,points,gameOn = true;
 
 //THE DIFFICULTY GOES AS FOLLOWS (16 is EASY, 14 is MEDIUM, 12 is HARD)
 var difficulty = 16;
@@ -100,27 +100,36 @@ function generateCode(){
     var code = Math.round(Math.random()*100000);
     console.log(code);
     socket.emit('newGameCode',code);
-    repeatedCheck = setInterval(checkCode,100,code);
+    repeatedCheck = setInterval(checkCode,500,code);
 }
 
 //DETERMINE IF THE CODE IS UNIQUE
 function checkCode(code){
-    switch (codeSuccess){
-        case -1:
-            generateCode();
-            clearInterval(repeatedCheck);
-            codeSuccess = 0;
-            break;
-        case 1:
-            thisID = code;
-            clearInterval(repeatedCheck);
-            codeSuccess = 0;
+    if(thisID == undefined){
+        switch (codeSuccess){
+            case -1:
+                generateCode();
+                clearInterval(repeatedCheck);
+                codeSuccess = 0;
+                break;
+            case 1:
+                thisID = code;
+                clearInterval(repeatedCheck);
+                codeSuccess = 0;
+                break;
+            default:
+                generateCode();
+                clearInterval(repeatedCheck);
+                codeSuccess = 0;
+        }
     }
 }
 
 //HANDLE SUCCESSFUL OR REPEATED CODES
 socket.on('failedCode',function(){
-   codeSuccess = -1; 
+    if(codeSuccess!=1){
+        codeSuccess = -1; 
+    }
 });
 
 socket.on("successfulCode",function(){
@@ -151,6 +160,7 @@ $(".beginGame").click(function(){
                $(".countDown p").text(num+"...");
            },function(){
                if(startPosition==undefined){
+                    keepTime();
                     startPosition = {lat: getRandom(boundaries.south,boundaries.north), lng: getRandom(boundaries.west,boundaries.east)};
                     console.log(startPosition);
                     panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'));
@@ -183,12 +193,20 @@ function processSVData(data, status){
 
 //A FUNCTION TO CHECK IF THE PLAYERS HAVE WON
 function checkVictory(){
-    if(partnerPosition!=undefined&&position!=undefined){
-        var partnerOBJ = new google.maps.LatLng(partnerPosition.lat,partnerPosition.lng);
-        var myOBJ = new google.maps.LatLng(position.lat,position.lng);
-        var distance = google.maps.geometry.spherical.computeDistanceBetween(myOBJ,partnerOBJ);
-        if(Math.abs(distance)<10){
-            alert("YOU WON");
+    if(gameOn==true){
+        if(partnerPosition!=undefined&&position!=undefined){
+            var partnerOBJ = new google.maps.LatLng(partnerPosition.lat,partnerPosition.lng);
+            var myOBJ = new google.maps.LatLng(position.lat,position.lng);
+            var distance = google.maps.geometry.spherical.computeDistanceBetween(myOBJ,partnerOBJ);
+            console.log("TEST")
+            if(Math.abs(distance)<10){
+                console.log("WHAT A WINNER");
+                points = ((1800-time)*(difficulty-15));
+                $(".points").text(points + " Points");
+                $(".winmessage").prop("hidden",false);
+                gameOn = false;
+                socket.emit('win',{for:partner,time:time,difficulty:difficulty});
+            }
         }
     }
 }
@@ -200,4 +218,17 @@ socket.on('moved',function(data){
             checkVictory();
         }
     }
+});
+
+function keepTime(){
+    time++;
+    if(time<1800){
+        setTimeout(keepTime,1000);
+    }
+}
+
+
+//TEST
+socket.on('test',function(data){
+    console.log(data);
 })

@@ -80,6 +80,13 @@ function initSocketIO(){
         socket.on('moved',function(data){
             io.emit('moved',data); 
         });
+        socket.on('win',function(data){
+            io.emit('win',data); 
+        });
+        //TEST
+        socket.on('test',function(){
+            io.emit('test',gameCodes);
+        });
     });
 }
 
