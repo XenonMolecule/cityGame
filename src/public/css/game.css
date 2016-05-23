@@ -133,7 +133,7 @@ html, body {
   color:#FFF;
   background-color:rgba(0, 115, 153,0.85);
   z-index:1001;
-  height:30vh;
+  height:25vh;
   width:60vw;
   margin-left:20vw;
   border-radius:10px 10px;
@@ -155,6 +155,13 @@ html, body {
   margin-top:7px;
 }
 
+@media(min-width:700px){
+  .winmessage{
+    height:30vh;
+    font-size:4vw;
+  }
+}
+
 @media(min-width:1200px){
   .waitScreen p{
     font-size:5vw;
@@ -170,8 +177,12 @@ html, body {
   .connectMsg{
     font-size:1.5vw !important;
   }
-  
   .winmessage{
-    font-size:2.5vw;
+    height:35vh;
+    font-size:5vw;
   }
+  
 }
+
+
+

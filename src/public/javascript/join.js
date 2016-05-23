@@ -10,13 +10,15 @@ $(".beginGame").on("click",function(){
 
 socket.on('successfulPair',function(id){
     if(gameCode!=undefined&&gameStarted==false){
-        serverID = id.yourID;
-        partner = id.serverID;
-        var data = {id:gameCode,yourID:partner}
-        socket.emit('giveID',data);
-        $(".joinGame").fadeOut(500,function(){
-            $(".wait").fadeIn(500);
-        });
+        if(gameCode == id.id){
+            serverID = id.yourID;
+            partner = id.serverID;
+            var data = {id:gameCode,yourID:partner}
+            socket.emit('giveID',data);
+            $(".joinGame").fadeOut(500,function(){
+                $(".wait").fadeIn(500);
+            });
+        }
     }
 });
 
@@ -62,7 +64,7 @@ socket.on("win",function(data){
     console.log("WINNER");
     if(data.for==serverID){
         points = ((1800-data.time)*(data.difficulty-15));
-        $(".points").text(points);
+        $(".points").text(points + "Points");
         $(".winmessage").fadeIn(1000);
     }
 });

@@ -1,4 +1,33 @@
 extends ./layout.jade
 
 block content
-    a(href = "./host") This will be the landing page for the game eventually, but for now click this link to get to the game
+    .site-wrapper
+      .site-wrapper-inner
+        .cover-container
+          .masthead.clearfix
+            .inner
+              h3.masthead-brand find.me
+              nav
+                ul.nav.masthead-nav
+                  li.active
+                    a(href='#') Home
+                  li
+                    a(href="#") Play
+                  li
+                    a(href='#') Features
+                  li
+                    a(href='#') About
+          .inner.cover
+            h1.cover-heading Play find.me
+            p.lead
+              | find.me is a game where you and a friend are placed in a city in random locations, and have to find eachother with street view.
+            p.lead
+              a.btn.btn-lg.btn-default(href='#') Learn more
+          .mastfoot
+            .inner
+              p
+                | See project on 
+                a(href='https://github.com/XenonMolecule/cityGame') Github
+                | , by 
+                a(href='https://github.com/XenonMolecule') @XenonMolecule
+                | .
