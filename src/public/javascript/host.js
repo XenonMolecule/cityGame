@@ -232,3 +232,49 @@ function keepTime(){
 socket.on('test',function(data){
     console.log(data);
 })
+
+//Return the angle between the players in the weird way google likes it
+function getAngle(myPos, otherPos){
+  var y = otherPos.lat - myPos.lat;
+  var x = otherPos.lng - myPos.lat;
+  var angle = 0;
+  if(x!==0&&y!==0){
+    angle = Math.atan(y/x);
+  } else if(x===0){
+    if(y>0){
+      return 0;
+    } else {
+      if(y!==0){
+        return 180;
+      } else {
+        return -1;
+      }
+    }
+  } else if(y===0){
+    if(x>0){
+      return 90;
+    } else {
+      if(x!==0){
+        return 270;
+      } else {
+        return -1; 
+      }
+    }
+  } else {
+    return -1;
+  }
+  angle  = (angle*180)/Math.PI;
+  if(x>0){
+    if(y<0){
+      angle+=360;
+    }
+  } else {
+      angle+=180;
+  }
+  angle = Math.abs(360-angle);
+  if(angle<=270){
+    return angle+90;
+  } else {
+    return angle-270;
+  }
+}

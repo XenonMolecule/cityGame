@@ -64,7 +64,7 @@ socket.on("win",function(data){
     console.log("WINNER");
     if(data.for==serverID){
         points = ((1800-data.time)*(data.difficulty-15));
-        $(".points").text(points + "Points");
+        $(".points").text(points + " Points");
         $(".winmessage").fadeIn(1000);
     }
 });
