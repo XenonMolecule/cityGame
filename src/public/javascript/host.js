@@ -33,7 +33,10 @@ function initMap() {
     });
     autocomplete.bindTo('bounds', map);
     
+    var infoWindow = new google.maps.InfoWindow();
+    
     autocomplete.addListener('place_changed',function(){
+        infoWindow.close();
         marker.setVisible(false);
         var place = autocomplete.getPlace();
         boundaries = (autocomplete.getBounds()).toJSON();
@@ -46,6 +49,44 @@ function initMap() {
         }
         marker.setPosition(place.geometry.location);
         marker.setVisible(true);
+        $.ajax({
+            url: "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles="+encodeURIComponent((place.formatted_address.replace(", USA","")))+"&redirects=1&exintro=1&explaintext=1",
+            jsonp: "callback", 
+            dataType: 'jsonp', 
+            xhrFields: { withCredentials: true },
+            success: function(response) {
+                var description;
+                for(var value in response.query.pages){
+                    if(description==undefined){
+                        description = response.query.pages[value].extract;
+                    }
+                }
+                if(description==undefined){
+                    $.ajax({
+                        url: "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&titles="+encodeURIComponent(place.name)+"&redirects=1&exintro=1&explaintext=1",
+                        jsonp: "callback",
+                        dataType: 'jsonp',
+                        xhrFields: { withCredentials: true },
+                        success: function(response) {
+                           for(var value in response.query.pages){
+                                if(description==undefined){
+                                    description = response.query.pages[value].extract;
+                                }
+                            }
+                            if(description==undefined){
+                                description = place.name+" is a real cool place!!!"
+                            }
+                            infoWindow.setContent('<strong>'+place.name+'</strong><br><p>'+description+'</p><br>');
+                            infoWindow.open(map,marker);
+                        }
+                    })
+                } else {
+                    infoWindow.setContent('<strong>'+place.name+'</strong><br><p>'+description+'</p><br>');
+                    infoWindow.open(map,marker);
+                }
+            }
+        });
+        
         $("#startBtn").removeClass("disabledBtn");
         countDown(3,0,1000,function(num){},function(){
             boundaries = (autocomplete.getBounds()).toJSON();
@@ -278,3 +319,4 @@ function getAngle(myPos, otherPos){
     return angle-270;
   }
 }
+
