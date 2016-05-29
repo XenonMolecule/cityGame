@@ -8,7 +8,7 @@ function initMap() {
     //INIT STREET VIEW DATA SERVICE
     panorama = new google.maps.StreetViewPanorama(document.getElementById('street-view'),
     {
-        position: {lat: 34.1015969, lng: -118.3355452},
+        position: {lat: 40.7587018, lng: -73.9849776},
         pov:{heading:heading,pitch:0},
         addressControl: false,
         addressControlOptions: false,
@@ -24,7 +24,7 @@ function rotatePano(){
         heading+=360;
     }
     panorama.setPov({heading:heading,pitch:0});
-    setTimeout(rotatePano,100);
+    setTimeout(rotatePano,50);
 }
 
 //A function to switch the user to the desired page
