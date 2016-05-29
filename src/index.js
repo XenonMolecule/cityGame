@@ -35,11 +35,19 @@ app.get("/host",function(req,res){
     initSocketIO();
 });
 
+//JOIN ROUTE--
+//      Should allow a player to join the game
 app.get("/join",function(req,res){
     res.locals.onGame = true;
     res.locals.host = false;
     res.render("join.jade");
     initSocketIO();
+});
+
+app.get("/home",function(req,res){
+    res.locals.onGame = false;
+    res.locals.host = false;
+    res.render("home.jade");
 });
 
 //SOCKET IO CONNECTION HANDLING

@@ -10,20 +10,50 @@ block content
               h3.masthead-brand find.me
               nav
                 ul.nav.masthead-nav
-                  li.active
-                    a(href='#') Home
-                  li
-                    a(href="#") Play
-                  li
-                    a(href='#') Shop
-                  li
-                    a(href='#') About
+                  li.active.homeLink
+                    a(href='#home') Home
+                  li.playLink
+                    a(href="#play") Play
+                  li.shopLink
+                    a(href='#shop') Shop
+                  li.aboutLink
+                    a(href='#about') About
           .inner.cover
-            h1.cover-heading Play find.me
-            p.lead
-              | find.me is a game where you and a friend are placed in a city in random locations, and have to find eachother with street view.
-            p.lead
-              a.btn.btn-lg.btn-default(href='#') Learn more
+            .home(id="#home")
+              h1.cover-heading Play find.me
+              p.lead
+                | find.me is a game where you and a friend are placed in a city in random locations, and have to find eachother with street view.
+              p.lead
+                a.btn.btn-lg.btn-default(href='#') Play Now
+            .play(hidden id="#play")
+              .login
+                h1.cover-heading Login
+                .form-group
+                  label(for='exampleInputEmail1') Email address
+                  input#loginEmail.form-control(type='email', placeholder='Email')
+                .form-group
+                  label(for='exampleInputPassword1') Password
+                  input#loginPassword.form-control(type='password', placeholder='Password')
+                button.btn.btn-lg.btn-success.login-btn Login
+                h5.errorMessageLogin(hidden, style="color:rgba(255,255,255,0.5)") ERROR
+                h5(style="color:rgba(255,255,255,0.5)")
+                  | Don't have an account? 
+                  a(href="#signup" id="signup") Sign up
+                  
+            .error(hidden id="#error")
+              p.lead
+                | Could not find requested page
+            .signup(hidden id="#signup")
+              div
+                h1.cover-heading Sign up
+                .form-group
+                  label(for='exampleInputEmail1') Email address
+                  input#signupEmail.form-control(type='email', placeholder='Email')
+                .form-group
+                  label(for='exampleInputPassword1') Password
+                  input#signupPassword.form-control(type='password', placeholder='Password')
+                button.btn.btn-lg.btn-success.signup-btn Sign up
+                h5.errorMessageSignup(hidden, style="color:rgba(255,255,255,0.5)") ERROR
           .mastfoot
             .inner
               p
@@ -31,4 +61,6 @@ block content
                 a(href='https://github.com/XenonMolecule/cityGame') Github
                 | , by 
                 a(href='https://github.com/XenonMolecule') @XenonMolecule
+                | , and 
+                a(href='https://github.com/Cameronlund4') @Cameronlund4
                 | .

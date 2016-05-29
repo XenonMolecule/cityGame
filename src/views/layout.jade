@@ -12,12 +12,13 @@ html(lang="en")
         script(type='text/javascript').
             var socket = io();
         script(src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs2phiRJMMH2r4GIZCZy6jVy89Og9aft8&callback=initMap&libraries=places,geometry" async defer)
+        script(src='https://www.gstatic.com/firebasejs/live/3.0/firebase.js')
+        script(src="/static/javascript/app.js")
         if onGame == true
             if host == true
                 script(src="/static/javascript/host.js")
             else if host == false
                 script(src="/static/javascript/join.js")
-            script(src="/static/javascript/app.js")
         else if onGame == false
             script(src="/static/javascript/home.js")
         

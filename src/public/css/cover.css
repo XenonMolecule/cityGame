@@ -170,3 +170,7 @@ body {
   margin-left:0px;
   z-index:-1;
 }
+
+.form-group{
+  font-size:18px;
+}
