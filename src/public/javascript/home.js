@@ -19,12 +19,12 @@ function initMap() {
 }
 
 function rotatePano(){
-    heading-=0.25;
+    heading-=0.125;
     if(heading<0){
         heading+=360;
     }
     panorama.setPov({heading:heading,pitch:0});
-    setTimeout(rotatePano,50);
+    setTimeout(rotatePano,100);
 }
 
 //A function to switch the user to the desired page
