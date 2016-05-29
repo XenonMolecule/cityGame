@@ -4,7 +4,8 @@
   "description": "A game where you and your friend are placed in different places in a city, and you have to find eachother. Built at CodeDay Philly Spring 2016",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node ./src/index.js"
   },
   "repository": {
     "type": "git",
