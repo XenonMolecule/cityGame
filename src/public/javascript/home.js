@@ -1,5 +1,5 @@
 //STREET VIEW DATA SERVICE
-var panorama,heading=270,currentPage = "home";
+var panorama,heading=210,currentPage = "home";
 
 var theLocation=window.location.hash.replace("#","");
 
@@ -19,12 +19,12 @@ function initMap() {
 }
 
 function rotatePano(){
-    heading-=0.125;
+    heading-=0.0625;
     if(heading<0){
         heading+=360;
     }
     panorama.setPov({heading:heading,pitch:0});
-    setTimeout(rotatePano,50);
+    setTimeout(rotatePano,100);
 }
 
 //A function to switch the user to the desired page
