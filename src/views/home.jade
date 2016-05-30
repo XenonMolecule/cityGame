@@ -39,6 +39,11 @@ block content
                 h5(style="color:rgba(255,255,255,0.5)")
                   | Don't have an account? 
                   a(href="#signup" id="signup") Sign up
+              .notVerified(hidden)
+                p.lead
+                  | Please verify your email before playing
+                h5(style="color:rgba(255,255,255,0.5)").emailNotSent Didn't get an email? 
+                  a(href="#play") Send another
                   
             .error(hidden id="#error")
               p.lead

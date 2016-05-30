@@ -74,6 +74,7 @@ $(".signup-btn").click(function(){
         }).then(function(user){
             if(firebase.auth().currentUser!=null){
                 //TODO ADD ACCOUNT PAGE TO GO TO INSTEAD
+                user.sendEmailVerification();
                 switchPage("play");
                 $("errorMessageSignup").hide();
                 $("#signupEmail").val("");
@@ -87,7 +88,6 @@ $(".signup-btn").click(function(){
 });
 
 $(".login-btn").click(function(){
-    console.log("Logging in...")
     if(firebase.auth().currentUser==null){
         firebase.auth().signInWithEmailAndPassword($("#loginEmail").val(),$("#loginPassword").val()).catch(function(error){
             $(".errorMessageLogin").text(error.message);
@@ -112,10 +112,22 @@ function addLogin(){
         $(".login").show();
     } else {
         $(".login").hide();
+        if(!firebase.auth().currentUser.emailVerified){
+            $(".notVerified").show();
+        } else {
+            $(".notVerified").hide();
+        }
     }
 }
 
 //WHEN THE USERS LOGIN STATE CHANGES
 firebase.auth().onAuthStateChanged(function(){
     addLogin(); 
+});
+
+//Resend verification email
+$(".emailNotSent a").click(function(e){
+    e.preventDefault();
+    firebase.auth().currentUser.sendEmailVerification();
+    $(".emailNotSent").text("Email Sent");
 });
