@@ -1,7 +1,10 @@
 //STREET VIEW DATA SERVICE
-var panorama,heading=210,currentPage = "home";
+var panorama,heading=210,currentPage = "home",afterLogin="home";
 
 var theLocation=window.location.hash.replace("#","");
+
+//Pages that need authentication to reach
+var authPages = ["play","shop","account"];
 
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
@@ -18,6 +21,7 @@ function initMap() {
     rotatePano();
 }
 
+//A RECURSIVE FUNCTION TO ROTATE THE PANORAMA VIEW
 function rotatePano(){
     heading-=0.0625;
     if(heading<0){
@@ -29,25 +33,42 @@ function rotatePano(){
 
 //A function to switch the user to the desired page
 function switchPage(nextPage){
-    if(nextPage==""){
-        nextPage = currentPage;
+    pageSwitch : {
+        //prevent issue on first visit
+        if(nextPage==""){
+            nextPage = currentPage;
+        }
+        //figure out the login destination
+        nextPage = loginExceptions(nextPage);
+        
+        //Check if auth page, and switch procedure if necessary
+        if(handleAuthPages(nextPage)){
+            break pageSwitch;
+        } else if(theLocation=="login"&&currentPage=="login"&&nextPage=="login"){
+            switchPage(afterLogin);
+            break pageSwitch;
+        }
+        
+        //Set the url to the proper look
+        document.location = "./#"+nextPage;
+        
+        //get the true name of the page (helps with errors)
+        var className=$("."+nextPage).attr("id");
+        
+        //Send to error page if not found
+        if(className==undefined){
+            className = "error";
+            nextPage = "error";
+        }
+        
+        //Show the proper page
+        className = className.replace("#","");
+        $("."+currentPage).hide();
+        $("."+className).show();
+        $("."+currentPage+"Link").removeClass("active")
+        $("."+className+"Link").addClass("active");
+        currentPage = nextPage;
     }
-    document.location = "./#"+nextPage;
-    var className=$("."+nextPage).attr("id");
-    
-    if(className==undefined){
-        className = "error";
-        nextPage = "error";
-    }
-    className = className.replace("#","");
-    $("."+currentPage).hide();
-    $("."+className).show();
-    $("."+currentPage+"Link").removeClass("active")
-    $("."+className+"Link").addClass("active");
-    if(className == "play"){
-        addLogin();
-    }
-    currentPage = nextPage;
 }
 
 //ON LOAD SWITCH TO PROPER PAGE
@@ -56,16 +77,19 @@ if(theLocation!=""||theLocation!=undefined){
     $(".login").hide();
 }
 
+//SET UP NAVBAR
 $("ul.nav.masthead-nav li").each(function(){
     $(this).click(function(){
         switchPage($(this).text().trim().toLowerCase()); 
     });
 });
 
+//HANDLE SIGNUP REDIRECT
 $("#signup").click(function(){
     switchPage("signup");
 });
 
+//HANDLE SIGN UP
 $(".signup-btn").click(function(){
     if(firebase.auth().currentUser==null){
         firebase.auth().createUserWithEmailAndPassword($("#signupEmail").val(),$("#signupPassword").val()).catch(function(error){
@@ -75,7 +99,7 @@ $(".signup-btn").click(function(){
             if(firebase.auth().currentUser!=null){
                 //TODO ADD ACCOUNT PAGE TO GO TO INSTEAD
                 user.sendEmailVerification();
-                switchPage("play");
+                switchPage("login");
                 $("errorMessageSignup").hide();
                 $("#signupEmail").val("");
                 $("#signupPassword").val("");
@@ -87,6 +111,7 @@ $(".signup-btn").click(function(){
     }
 });
 
+//HANDLE LOGIN
 $(".login-btn").click(function(){
     if(firebase.auth().currentUser==null){
         firebase.auth().signInWithEmailAndPassword($("#loginEmail").val(),$("#loginPassword").val()).catch(function(error){
@@ -98,7 +123,8 @@ $(".login-btn").click(function(){
                 $(".errorMessageLogin").hide();
                 $("#loginEmail").val("");
                 $("#loginPassword").val("");
-                //TODO SHOW LEVEL SELECTION 
+                //TODO SHOW LEVEL SELECTION
+                switchPage(afterLogin);
             }
         });
     } else {
@@ -107,27 +133,65 @@ $(".login-btn").click(function(){
     }
 });
 
-function addLogin(){
-    if(firebase.auth().currentUser==null){
-        $(".login").show();
-    } else {
-        $(".login").hide();
-        if(!firebase.auth().currentUser.emailVerified){
-            $(".notVerified").show();
-        } else {
-            $(".notVerified").hide();
-        }
-    }
-}
-
-//WHEN THE USERS LOGIN STATE CHANGES
-firebase.auth().onAuthStateChanged(function(){
-    addLogin(); 
-});
-
 //Resend verification email
 $(".emailNotSent a").click(function(e){
     e.preventDefault();
     firebase.auth().currentUser.sendEmailVerification();
     $(".emailNotSent").text("Email Sent");
+});
+
+//HANDLES THE SITUATIONS WHERE THE USER
+//NEEDS TO LOGIN, THEN GO TO A PAGE
+function loginExceptions(page){
+    if(page.slice(0,page.length-1)=="login"){
+        switch(page.slice(page.length-1,page.length)){
+            case "p":
+                afterLogin = "play";
+                break;
+            case "s":
+                afterLogin = "shop";
+                break;
+            case "a":
+                afterLogin = "account";
+                break;
+            default:
+                afterLogin = "home";
+        }
+        return "login";
+    }
+    return page;
+}
+
+//A FUNCTION TO CHECK IF THE DESIRED PAGE
+//REQUIRES AUTHENTICATION, AND HANDLE ACCORDINGLY
+function handleAuthPages(page){
+    if(firebase.auth().currentUser==null){
+        $(".notVerified").hide();
+        $(".loginInfo").show();
+        return checkIfAuth(page);
+    } else if(firebase.auth().currentUser.emailVerified==false){
+        console.log("MUST VERIFY");
+        $(".notVerified").show();
+        $(".loginInfo").hide();
+        return checkIfAuth(page);
+    }
+    return false;
+}
+
+//CHECKS IF THE PAGE THE USER IS GOING TO REQUIRES AUTH
+function checkIfAuth(page){
+    for(var i = 0; i < authPages.length; i++){
+        if(page == authPages[i]){
+            switchPage("login"+page.slice(0,1));
+            return true;
+        }
+    }
+    return false;
+}
+
+//WHEN LOGIN OR LOGOUT
+firebase.auth().onAuthStateChanged(function(){
+     if(checkIfAuth(currentPage)||currentPage=="login"){
+         switchPage(currentPage);
+     }
 });
