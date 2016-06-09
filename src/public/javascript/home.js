@@ -6,6 +6,14 @@ var theLocation=window.location.hash.replace("#","");
 //Pages that need authentication to reach
 var authPages = ["play","shop","account"];
 
+//Pages that link to pages different from their name
+var oddPages = [["sign out","home"],["my account","account"],["log in","account"]];
+
+//Account features with/without auth
+//IMPORTANT: For both, just don't include in either
+var authAccountFeatures = [".signOut",".accountDivider",".myAccount"];
+var unAuthedAccountFeatures = [".logIn"];
+
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
     //INIT STREET VIEW DATA SERVICE
@@ -33,7 +41,11 @@ function rotatePano(){
 
 //A function to switch the user to the desired page
 function switchPage(nextPage){
+    console.log(nextPage)
     pageSwitch : {
+        if(nextPage.split(" ")[0]=="dropdown"){
+            break pageSwitch;
+        }
         //prevent issue on first visit
         if(nextPage==""){
             nextPage = currentPage;
@@ -44,8 +56,12 @@ function switchPage(nextPage){
         //Check if auth page, and switch procedure if necessary
         if(handleAuthPages(nextPage)){
             break pageSwitch;
-        } else if(theLocation=="login"&&currentPage=="login"&&nextPage=="login"){
-            switchPage(afterLogin);
+        }
+        
+        //Fix getting stuck on login page glitch
+        if((currentPage=="login")&&(nextPage=="login")&&(firebase.auth().currentUser!=null)){
+            setTimeout(switchPage,100,afterLogin);
+            afterLogin = "home";
             break pageSwitch;
         }
         
@@ -80,7 +96,11 @@ if(theLocation!=""||theLocation!=undefined){
 //SET UP NAVBAR
 $("ul.nav.masthead-nav li").each(function(){
     $(this).click(function(){
-        switchPage($(this).text().trim().toLowerCase()); 
+        if(!($(this).hasClass("dropdown"))){
+            if(!handleOutliers($(this).text().trim().toLowerCase())){
+                switchPage($(this).text().trim().toLowerCase());
+            }
+        }
     });
 });
 
@@ -191,7 +211,84 @@ function checkIfAuth(page){
 
 //WHEN LOGIN OR LOGOUT
 firebase.auth().onAuthStateChanged(function(){
-     if(checkIfAuth(currentPage)||currentPage=="login"){
-         switchPage(currentPage);
-     }
+     authStateChanged();
 });
+
+//REDIRECTS USERS TO PROPER PAGE WHEN USING AN ABNORMAL LINKS
+//SUCH AS SIGNOUT LINKING TO HOME
+function handleOutliers(page){
+    for(var i = 0; i < oddPages.length; i ++){
+        if(page == oddPages[i][0]){
+            switchPage(oddPages[i][1].trim().toLowerCase());
+            return true;
+        }
+    }
+    return false;
+}
+
+//SETUP SIGNOUT BUTTON
+$(".signOut").on("click",function(){
+    firebase.auth().signOut();
+    authStateChanged();
+});
+
+//CALLED WHEN SIGNING IN OR OUT
+function authStateChanged(){
+    swapAccountModes();
+}
+
+//A FUNCTION THAT RETURNS WHETHER OR NOT THE USER IS LOGGED IN
+function loggedIn(){
+    return (firebase.auth().currentUser!=null);
+}
+
+//ADD PLAY BUTTON
+$(".playBtn").on("click",function(){
+   switchPage("play"); 
+});
+
+//CAPITALIZE THE FIRST LETTER OF A STRING
+String.prototype.capitalize = function(){
+    var string = this.split("");
+    string[0] = string[0].toUpperCase();
+    string = string.join("");
+    return string;
+}
+
+//A FUNCTION TO SWAP THE AVAILABLE FEATURES TO A LOGGED IN OR NOT LOGGED IN PERSON
+function swapAccountModes(){
+    if(loggedIn()){
+        $(".dropdown-toggle").html(firebase.auth().currentUser.email.split("@")[0].substring(0,16).capitalize()+'<span class="caret"></span>');
+        switchAccountFeatures();
+    } else {
+        $(".dropdown-toggle").html('Account<span class="caret"></span>');
+        switchAccountFeatures();
+    }
+}
+
+//SWITCHES WHAT A USER CAN DO DEPENDING ON IF AUTHED IN ACCOUNT MENU
+function switchAccountFeatures(){
+    //JUST A DIFFERENT WAY FOR THE JQUERY SHOW AND HIDE FUNCTIONS TO BE CALLED
+    function show(className){
+        $(className).show();
+    }
+    function hide(className){
+        $(className).hide();
+    }
+    var showFunc;
+    var hideFunc;
+    if(loggedIn()){
+        showFunc = show;
+        hideFunc = hide;
+    } else {
+        showFunc = hide;
+        hideFunc = show;
+    }
+    for(var i = 0; i < authAccountFeatures.length; i ++){
+        showFunc(authAccountFeatures[i]);
+    } 
+    for(var i = 0; i < unAuthedAccountFeatures.length; i ++){
+        hideFunc(unAuthedAccountFeatures[i]);    
+    }
+}
+

@@ -18,13 +18,25 @@ block content
                     a(href='#shop') Shop
                   li.aboutLink
                     a(href='#about') About
+                  li.dropdown
+                    a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                      | Account
+                      span.caret
+                    ul.dropdown-menu
+                      li
+                        a(href='#account',id="myAccount").myAccount My Account
+                      li.divider.accountDivider(role='separator')
+                      li
+                        a(href='#home',id="signOut").signOut Sign out
+                      li
+                        a(href="#account",hidden,id="logIn").logIn Log in
           .inner.cover
             .home(id="#home")
               h1.cover-heading Play find.me
               p.lead
                 | find.me is a game where you and a friend are placed in a city in random locations, and have to find eachother with street view.
               p.lead
-                a.btn.btn-lg.btn-default(href='#') Play Now
+                a.btn.btn-lg.btn-default.playBtn(href='#') Play Now
             .play(hidden id="#play")
               p.lead
                 | Game Selection Here

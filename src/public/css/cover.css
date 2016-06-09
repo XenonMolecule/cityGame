@@ -174,3 +174,13 @@ body {
 .form-group{
   font-size:18px;
 }
+
+.dropdown-menu{
+  background-color: #FFF;
+  background-color: rgba(255,255,255,0.5);
+}
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover{
+  border-color: rgba(255,255,255,0.5);
+  background-color:rgba(0,0,0,0.0);
+}
