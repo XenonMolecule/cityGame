@@ -5,6 +5,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+//SETUP FILE SYSTEM INTERACTIONS
+var fs = require('fs');
+
 var gameCodes = [];
 
 app.use('/static', express.static(__dirname + '/public'));
@@ -24,6 +27,7 @@ app.get("/",function(req,res){
     res.locals.onGame = false;
     res.locals.host = false;
     res.render("home.jade");
+    initSocketIO();
 });
 
 //HOST ROUTE--
@@ -90,6 +94,16 @@ function initSocketIO(){
         });
         socket.on('win',function(data){
             io.emit('win',data); 
+        });
+        socket.on('newProfileImage',function(data){
+            console.log("New Profile Image");
+            fs.writeFile('./public/images/players/'+data.user+'.txt',data.image,function(err){
+                if(err!=null){
+                    console.log(err);
+                } else {
+                    console.log("updated "+data.user+"'s profile picture");
+                }
+            });
         });
         //TEST
         socket.on('test',function(){

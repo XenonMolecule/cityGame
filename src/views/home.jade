@@ -73,6 +73,38 @@ block content
                     | Please verify your email before continuing
                   h5(style="color:rgba(255,255,255,0.5)").emailNotSent Didn't get an email? 
                     a(href="#play") Send another
+            .account(hidden id="#account")
+              .container-fluid.wideContainer
+                .row
+                  .col-md-6.col-sm-6.col-xs-6.avatarBox
+                    .innerAvatarBox
+                      img(src="/static/images/players/default.png").avatar
+                      br
+                      br
+                      button.btn.btn-md.btn-default.imageChanger Change Image
+                      input(type="file" hidden id="fileUpload" accept = "image/gif,image/jpeg,image/png,image/tif").fileUpload
+                      canvas(hidden id="resizeImage" width="400px" height="400px")
+                  .col-md-6.col-sm-6.col-xs-6.playerInfo
+                    h1.h0.playerName XenonDev54
+                    .row
+                      .col-md-1.col-sm-1.col-xs-1
+                          h3 Lv.
+                        .col-md-11.col-sm-11.col-xs-11
+                          h3 1
+                    .row
+                      .col-md-1.col-sm-1.col-xs-1
+                        //img() <-- Coin
+                      .col-md-11.col-sm-11.col-xs-11
+                        h3 0
+                    .row
+                      .col-md-3.col-sm-3.col-xs-3
+                        //BADGE
+                      .col-md-3.col-sm-3.col-xs-3
+                        //BADGE
+                      .col-md-3.col-sm-3.col-xs-3
+                        //BADGE
+                      .col-md-3.col-sm-3.col-xs-3
+                        //BADGE
           .mastfoot
             .inner
               p

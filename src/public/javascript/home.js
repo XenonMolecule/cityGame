@@ -14,6 +14,13 @@ var oddPages = [["sign out","home"],["my account","account"],["log in","account"
 var authAccountFeatures = [".signOut",".accountDivider",".myAccount"];
 var unAuthedAccountFeatures = [".logIn"];
 
+//PAGES THAT RUN FUNCTIONS WHEN OPENED
+var specialPages = [['account',setupAccountPage]]
+
+//INIT FILE READING STUFF
+var file = new FileReader();
+var fileData;
+
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
     //INIT STREET VIEW DATA SERVICE
@@ -41,7 +48,6 @@ function rotatePano(){
 
 //A function to switch the user to the desired page
 function switchPage(nextPage){
-    console.log(nextPage)
     pageSwitch : {
         if(nextPage.split(" ")[0]=="dropdown"){
             break pageSwitch;
@@ -64,6 +70,9 @@ function switchPage(nextPage){
             afterLogin = "home";
             break pageSwitch;
         }
+        
+        //Run any special functions associated with the current page
+        checkSpecialPages(nextPage);
         
         //Set the url to the proper look
         document.location = "./#"+nextPage;
@@ -258,7 +267,7 @@ String.prototype.capitalize = function(){
 //A FUNCTION TO SWAP THE AVAILABLE FEATURES TO A LOGGED IN OR NOT LOGGED IN PERSON
 function swapAccountModes(){
     if(loggedIn()){
-        $(".dropdown-toggle").html(firebase.auth().currentUser.email.split("@")[0].substring(0,16).capitalize()+'<span class="caret"></span>');
+        $(".dropdown-toggle").html(playerName()+'<span class="caret"></span>');
         switchAccountFeatures();
     } else {
         $(".dropdown-toggle").html('Account<span class="caret"></span>');
@@ -292,3 +301,86 @@ function switchAccountFeatures(){
     }
 }
 
+//FIX ANNOYING INPUT CSS ISSUE, BY REWIRING BUTTON ROUTE
+$(".imageChanger").on("click",function(){
+    $(".fileUpload").click(); 
+});
+
+//WHEN USER UPLOADS NEW IMAGE
+$(".fileUpload").on("change", function (){
+    var input = document.getElementById('fileUpload');
+    if(input.files[0]!=undefined){
+        file.readAsDataURL(input.files[0]);
+    }
+});
+
+//WHEN THE IMAGE HAS LOADED
+file.onload = function(event){
+    fileData = file.result;
+    var img = new Image();
+    img.onload = function(){
+        var canvas = document.getElementById('resizeImage');
+        var context = canvas.getContext('2d');
+        context.drawImage(img, 0, 0, img.width, img.height, 0, 0, 400, 400);
+        canvas.toBlob(function(blob){
+            var dataUrl;
+            var fileReader = new FileReader();
+            fileReader.onload = function(){
+                dataUrl = this.result;
+                if(loggedIn()){
+                    socket.emit('newProfileImage',{user:firebase.auth().currentUser.uid,image:dataUrl});
+                    setTimeout(switchPage,500,"account");
+                }
+            }
+            fileReader.readAsDataURL(blob);
+        })
+    }
+    img.src = fileData;
+}
+
+//GETS THE ACCOUNT PAGE INFORMATION PULLED UP FOR A USER
+function setupAccountPage(){
+    $(".avatar").attr("src","/static/images/players/default.png");
+    if(loggedIn()){
+        try{
+        $.ajax("/static/images/players/"+firebase.auth().currentUser.uid+".txt",{error:function(e){
+            $(".avatar").attr("src","/static/images/players/default.png");
+        }}).done(function(data){
+            $(".avatar").attr('src',data);
+        });
+        } catch(e){
+            console.log(e);
+        }
+        $(".playerName").text(playerName());
+        
+    }
+}
+
+//CHECKS IF THE CURRENT PAGE HAS A FUNCTION ASSOCIATED WITH IT, AND RUNS IT IF IT DOES
+function checkSpecialPages(page){
+    for(var i = 0; i < specialPages.length; i++){
+        if(specialPages[i][0]==page){
+            specialPages[i][1]();
+        }
+    }
+}
+
+//RETURNS THE PLAYER NAME IN WHATEVER WAY I PREFER AT THE MOMENT -- RIGHT NOW EMAIL
+function playerName(){
+    if(loggedIn()){
+        return firebase.auth().currentUser.email.split("@")[0].substring(0,20).capitalize();
+    }
+    return "";
+}
+
+//FIXES GLITCH WITH LOGIN LOADING BEFORE FIREBASE AUTHS
+function fixLoginRedirect(){
+    if(currentPage=="login"){
+        if(loggedIn()){
+            switchPage(afterLogin);
+        }
+    }
+    setTimeout(fixLoginRedirect,100);
+}
+
+fixLoginRedirect();

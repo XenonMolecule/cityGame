@@ -184,3 +184,70 @@ body {
   border-color: rgba(255,255,255,0.5);
   background-color:rgba(0,0,0,0.0);
 }
+
+.playerInfo{
+    display: inline-block;
+    text-align: left;
+    font-family:Oswald;
+}
+
+.h0{
+  font-size:6vw;
+}
+
+.avatar{
+  width:66%;
+  border-radius:100%;
+  margin-right: 0;
+}
+
+.avatarBox{
+  text-align: right;
+}
+
+.innerAvatarBox{
+  text-align: center;
+  display: inline-block;
+  width:auto;
+}
+
+.fileUpload{
+  display:none!important;
+}
+
+/*BIG DESKTOP*/
+@media (min-width:1200px){
+  .wideContainer{
+    width:80vw;
+    margin-left:-25vw;
+  }
+}
+
+/*MEDIUM DESKTOP*/
+@media (min-width: 992px) and (max-width:1199px){
+  .wideContainer{
+    width:80vw;
+    margin-left:-15vw;
+  }
+}
+
+/*TABLETS*/
+@media (min-width: 768px) and (max-width: 991px) {
+  .wideContainer{
+    width:100%;
+  }
+}
+
+/*MOBILE DEVICES*/
+@media (max-width:767px){
+  .wideContainer{
+    width:100%;
+  }
+}
+
+/*ALL BUT PHONE*/
+@media (min-width:768px){
+  .account{
+    margin-top:-25vh;
+  }
+}
