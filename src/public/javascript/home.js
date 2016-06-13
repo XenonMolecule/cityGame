@@ -1,5 +1,5 @@
 //STREET VIEW DATA SERVICE
-var panorama,heading=210,currentPage = "home",afterLogin="home";
+var panorama,heading=210,currentPage = "home",afterLogin="home",panoGo=true;
 
 var theLocation=window.location.hash.replace("#","");
 
@@ -7,19 +7,22 @@ var theLocation=window.location.hash.replace("#","");
 var authPages = ["play","shop","account"];
 
 //Pages that link to pages different from their name
-var oddPages = [["sign out","home"],["my account","account"],["log in","account"]];
+var oddPages = [["sign out","home"],["my account","account"],["log in","account"],["stats","statistics"]];
 
 //Account features with/without auth
 //IMPORTANT: For both, just don't include in either
-var authAccountFeatures = [".signOut",".accountDivider",".myAccount"];
+var authAccountFeatures = [".signOut",".accountDivider",".myAccount",".achievementPage",".friendsPage",".statsPage"];
 var unAuthedAccountFeatures = [".logIn"];
 
 //PAGES THAT RUN FUNCTIONS WHEN OPENED
-var specialPages = [['account',setupAccountPage]]
+var specialPages = [['account',setupAccountPage]];
 
 //INIT FILE READING STUFF
 var file = new FileReader();
 var fileData;
+
+//SETUP DEBUG OPTIONS
+var debug = 0;
 
 //FUNCTION TO BE CALLED WHEN THE GOOGLE API LOADS
 function initMap() {
@@ -38,16 +41,21 @@ function initMap() {
 
 //A RECURSIVE FUNCTION TO ROTATE THE PANORAMA VIEW
 function rotatePano(){
-    heading-=0.0625;
-    if(heading<0){
-        heading+=360;
+    if(panoGo){
+        heading-=0.0625;
+        if(heading<0){
+            heading+=360;
+        }
+        panorama.setPov({heading:heading,pitch:0});
+        setTimeout(rotatePano,100);
     }
-    panorama.setPov({heading:heading,pitch:0});
-    setTimeout(rotatePano,100);
 }
 
 //A function to switch the user to the desired page
 function switchPage(nextPage){
+    if(debug!=0){
+        console.log("Switching Pages to: "+nextPage);
+    }
     pageSwitch : {
         if(nextPage.split(" ")[0]=="dropdown"){
             break pageSwitch;
@@ -262,7 +270,7 @@ String.prototype.capitalize = function(){
     string[0] = string[0].toUpperCase();
     string = string.join("");
     return string;
-}
+};
 
 //A FUNCTION TO SWAP THE AVAILABLE FEATURES TO A LOGGED IN OR NOT LOGGED IN PERSON
 function swapAccountModes(){
@@ -328,22 +336,22 @@ file.onload = function(event){
             fileReader.onload = function(){
                 dataUrl = this.result;
                 if(loggedIn()){
-                    socket.emit('newProfileImage',{user:firebase.auth().currentUser.uid,image:dataUrl});
+                    socket.emit('newProfileImage',{user:firebase.auth().currentUser.email,image:dataUrl});
                     setTimeout(switchPage,500,"account");
                 }
-            }
+            };
             fileReader.readAsDataURL(blob);
-        })
-    }
+        });
+    };
     img.src = fileData;
-}
+};
 
 //GETS THE ACCOUNT PAGE INFORMATION PULLED UP FOR A USER
 function setupAccountPage(){
     $(".avatar").attr("src","/static/images/players/default.png");
     if(loggedIn()){
         try{
-        $.ajax("/static/images/players/"+firebase.auth().currentUser.uid+".txt",{error:function(e){
+        $.ajax("/static/images/players/"+firebase.auth().currentUser.email+".txt",{error:function(e){
             $(".avatar").attr("src","/static/images/players/default.png");
         }}).done(function(data){
             $(".avatar").attr('src',data);
@@ -351,7 +359,7 @@ function setupAccountPage(){
         } catch(e){
             console.log(e);
         }
-        $(".playerName").text(playerName());
+        $(".playerName").text(playerName().substring(0,14));
         
     }
 }
@@ -384,3 +392,13 @@ function fixLoginRedirect(){
 }
 
 fixLoginRedirect();
+
+//SETS UP ACHEIVEMENT BUTTON REDIRECT
+$(".achievementChanger").on("click",function(){
+    switchPage("achievements"); 
+});
+
+//SETS UP STATISTICS BUTTON REDIRECT
+$(".statChanger").on("click",function(){
+   switchPage("statistics"); 
+});

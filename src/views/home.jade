@@ -25,6 +25,12 @@ block content
                     ul.dropdown-menu
                       li
                         a(href='#account',id="myAccount").myAccount My Account
+                      li
+                        a(href="#achievements").achievementPage Achievements
+                      li
+                        a(href="#statistics").statsPage Stats
+                      li
+                        a(href="#friends").friendsPage Friends
                       li.divider.accountDivider(role='separator')
                       li
                         a(href='#home',id="signOut").signOut Sign out
@@ -87,24 +93,99 @@ block content
                   .col-md-6.col-sm-6.col-xs-6.playerInfo
                     h1.h0.playerName XenonDev54
                     .row
-                      .col-md-1.col-sm-1.col-xs-1
-                          h3 Lv.
-                        .col-md-11.col-sm-11.col-xs-11
-                          h3 1
-                    .row
-                      .col-md-1.col-sm-1.col-xs-1
-                        //img() <-- Coin
-                      .col-md-11.col-sm-11.col-xs-11
-                        h3 0
-                    .row
-                      .col-md-3.col-sm-3.col-xs-3
-                        //BADGE
-                      .col-md-3.col-sm-3.col-xs-3
-                        //BADGE
-                      .col-md-3.col-sm-3.col-xs-3
-                        //BADGE
-                      .col-md-3.col-sm-3.col-xs-3
-                        //BADGE
+                      .col-md-4.col-sm-4.col-xs-4
+                        .row
+                          .col-md-1.col-sm-1.col-xs-1
+                              h3 Lv.
+                            .col-md-9.col-sm-9.col-xs-6
+                              h3 1
+                        .row
+                          .col-md-1.col-sm-1.col-xs-1
+                            //img() <-- Coin
+                            h3 ₵
+                          .col-md-9.col-sm-9.col-xs-6
+                            h3 0
+                      .col-md-8.col-sm-8.col-xs-8.center
+                        .row
+                          .col-md-3.col-sm-3.col-xs-3
+                            //ACHIEVEMENT
+                            img(src="/static/images/achievements/transparent.png",width="90%")
+                          .col-md-3.col-sm-3.col-xs-3
+                            //ACHIEVEMENT
+                            img(src="/static/images/achievements/transparent.png",width="90%")
+                          .col-md-3.col-sm-3.col-xs-3
+                            //ACHIEVEMENT
+                            img(src="/static/images/achievements/transparent.png",width="90%")
+                          .col-md-3.col-sm-3.col-xs-3
+                            //ACHIEVEMENT
+                            img(src="/static/images/achievements/transparent.png",width="90%")
+                        button.btn.btn-md.btn-default.achievementChanger Change Displayed Achievements
+              .container-fluid.wide-ish-container
+                .row
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    h1.h0.stat 365
+                    h3.statDesc Days
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    h1.h0.stat 52
+                    h3.statDesc Weeks
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    h1.h0.stat 12
+                    h3.statDesc Months
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    h1.h0.stat 1
+                    h3.statDesc Year
+                  button.btn.btn-md.btn-default.statChanger Change Displayed Statistics
+                br
+                .row
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    a(href="#")
+                      img(src="/static/images/players/default.png",width="75%").round
+                    h3(id="friend1") NAME
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    a(href="#")
+                      img(src="/static/images/players/default.png",width="75%").round
+                    h3(id="friend2") NAME
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    a(href="#")
+                      img(src="/static/images/players/default.png",width="75%").round
+                    h3(id="friend3") NAME
+                  .col-md-3.col-sm-3.col-xs-3.center
+                    a(href="#")
+                      img(src="/static/images/players/default.png",width="75%").round
+                    h3(id="friend4") NAME
+            .achievements(id="#achievements" hidden)
+              .container-fluid
+                .row
+                  .col-md-3.col-sm-3.col-xs-3
+                    //ACHIEVEMENT
+                  .col-md-3.col-sm-3.col-xs-3
+                    //ACHIEVEMENT
+                  .col-md-3.col-sm-3.col-xs-3
+                    //ACHIEVEMENT
+                  .col-md-3.col-sm-3.col-xs-3
+                    //ACHIEVEMENT
+            .statistics(id="#statistics" hidden)
+              .container-fluid
+                .row
+                  .col-md-3.col-sm-3.col-xs-3
+                    //STATISTIC
+                  .col-md-3.col-sm-3.col-xs-3
+                    //STATISTIC
+                  .col-md-3.col-sm-3.col-xs-3
+                    //STATISTIC
+                  .col-md-3.col-sm-3.col-xs-3
+                    //STATISTIC
+            .friends(id="#friends" hidden)
+              .container-fluid
+                .row
+                  .col-md-3.col-sm-3.col-xs-3
+                    //FRIEND
+                  .col-md-3.col-sm-3.col-xs-3
+                    //FRIEND
+                  .col-md-3.col-sm-3.col-xs-3
+                    //FRIEND
+                  .col-md-3.col-sm-3.col-xs-3
+                    //FRIEND
           .mastfoot
             .inner
               p
